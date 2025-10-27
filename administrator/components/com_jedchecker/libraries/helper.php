@@ -173,7 +173,7 @@ abstract class JEDCheckerHelper
 
 		while (preg_match('/[\'"`]|<<<|\/\*|\/\/|#|\?>/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
-			$foundPos = $match[0][1];
+			$foundPos = (int)$match[0][1];
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
 			$pos = $foundPos;
 
@@ -276,7 +276,7 @@ abstract class JEDCheckerHelper
 						return $cleanContent . ($isCleanHtml ? '' : substr($content, $pos));
 					}
 
-					$foundPos = $match[0][1];
+					$foundPos = (int)$match[0][1];
 					$code = substr($content, $pos, $foundPos - $pos);
 					$cleanContent .= $isCleanHtml ? self::removeContent($code) : $code;
 
@@ -313,7 +313,7 @@ abstract class JEDCheckerHelper
 
 		while (preg_match('/\n|\\\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
-			$foundPos = $match[0][1];
+			$foundPos = (int)$match[0][1];
 			$cleanContent .= self::cleanLines(substr($content, $pos, $foundPos - $pos));
 			$pos = $foundPos;
 
