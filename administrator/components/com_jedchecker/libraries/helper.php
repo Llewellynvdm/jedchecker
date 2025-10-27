@@ -2,14 +2,14 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2021-2022 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2021-2025 Open Source Matters, Inc. All rights reserved.
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Filter\InputFilter;
 
 /**
@@ -173,7 +173,7 @@ abstract class JEDCheckerHelper
 
 		while (preg_match('/[\'"`]|<<<|\/\*|\/\/|#|\?>/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
-			$foundPos = $match[0][1];
+			$foundPos = (int)$match[0][1];
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
 			$pos = $foundPos;
 
@@ -276,7 +276,7 @@ abstract class JEDCheckerHelper
 						return $cleanContent . ($isCleanHtml ? '' : substr($content, $pos));
 					}
 
-					$foundPos = $match[0][1];
+					$foundPos = (int)$match[0][1];
 					$code = substr($content, $pos, $foundPos - $pos);
 					$cleanContent .= $isCleanHtml ? self::removeContent($code) : $code;
 
@@ -313,7 +313,7 @@ abstract class JEDCheckerHelper
 
 		while (preg_match('/\n|\\\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
-			$foundPos = $match[0][1];
+			$foundPos = (int)$match[0][1];
 			$cleanContent .= self::cleanLines(substr($content, $pos, $foundPos - $pos));
 			$pos = $foundPos;
 

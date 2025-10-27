@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Installer\Adapter\ComponentAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -26,7 +26,7 @@ class Com_JedcheckerInstallerScript
 {
 	protected $extension = 'com_jedchecker';
 	protected $min_php = '5.6.0';
-	protected $min_joomla = '3.8.0';
+	protected $min_joomla = '5.0.0';
 	protected $parent;
 
 	/**
@@ -119,7 +119,7 @@ class Com_JedcheckerInstallerScript
 	public function loadLanguage()
 	{
 		$extension = $this->extension;
-		$jlang = Factory::getLanguage();
+		$jlang = Factory::getApplication()->getLanguage();
 		$path = $this->parent->getParent()->getPath('source') . '/administrator/components/' . $extension;
 		$jlang->load($extension, $path, 'en-GB', true);
 		$jlang->load($extension, $path, $jlang->getDefault(), true);

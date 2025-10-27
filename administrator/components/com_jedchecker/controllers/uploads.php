@@ -2,10 +2,10 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
- * 			   02.06.12
+ *             02.06.12
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -14,8 +14,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Archive\Archive;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
@@ -42,7 +42,7 @@ class JedcheckerControllerUploads extends BaseController
 	 */
 	public function __construct()
 	{
-		$this->path         = Factory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path         = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker';
 		$this->pathArchive  = $this->path . '/archives';
 		$this->pathUnzipped = $this->path . '/unzipped';
 		parent::__construct();
@@ -69,7 +69,7 @@ class JedcheckerControllerUploads extends BaseController
 			$path = $this->pathArchive;
 
 			// If the archive folder doesn't exist - create it!
-			if (!Folder::exists($path))
+			if (!is_dir($path))
 			{
 				Folder::create($path);
 			}
@@ -90,7 +90,7 @@ class JedcheckerControllerUploads extends BaseController
 			$file['filepath'] = $path . '/' . strtolower($file['name']);
 
 			// Let us try to upload
-			if (!File::upload($file['tmp_name'], $file['filepath'], false, true))
+			if (!File::upload($file['tmp_name'], $file['filepath'], false))
 			{
 				// Error in upload - redirect back with an error notice
 				$appl->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
@@ -117,7 +117,7 @@ class JedcheckerControllerUploads extends BaseController
 	/**
 	 * unzip the file
 	 *
-	 * @return boolean
+	 * @return string
 	 */
 	public function unzip()
 	{
@@ -127,7 +127,7 @@ class JedcheckerControllerUploads extends BaseController
 		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// If folder doesn't exist - create it!
-		if (!Folder::exists($this->pathUnzipped))
+		if (!is_dir($this->pathUnzipped))
 		{
 			Folder::create($this->pathUnzipped);
 		}

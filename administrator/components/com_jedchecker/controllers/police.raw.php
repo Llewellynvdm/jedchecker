@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,9 +12,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
@@ -31,11 +30,11 @@ class JedcheckerControllerPolice extends BaseController
 	 */
 	public function check()
 	{
-		$rule = Factory::getApplication()->input->get('rule');
+		$rule = Factory::getApplication()->getInput()->get('rule');
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-		$path  = Factory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$path  = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/unzipped';
 		$class = 'jedcheckerRules' . ucfirst($rule);
 
 		// Stop if the class does not exist
@@ -75,7 +74,7 @@ class JedcheckerControllerPolice extends BaseController
 		$police->check();
 
 		// Get the report and then print it
-		$report = $police->get('report');
+		$report = $police->getReport();
 
 		echo $report->getHTML();
 	}
@@ -90,7 +89,7 @@ class JedcheckerControllerPolice extends BaseController
 		$folders = array();
 
 		// Add the folders in the "jed_checked/unzipped" folder
-		$path        = Factory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$path        = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/unzipped';
 		$tmp_folders = Folder::folders($path);
 
 		if (!empty($tmp_folders))
@@ -102,9 +101,9 @@ class JedcheckerControllerPolice extends BaseController
 		}
 
 		// Parse the local.txt file and parse it
-		$local = Factory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+		$local = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-		if (File::exists($local))
+		if (is_file($local))
 		{
 			$content = file_get_contents($local);
 
@@ -120,11 +119,11 @@ class JedcheckerControllerPolice extends BaseController
 
 						if (!empty($line))
 						{
-							if (Folder::exists(JPATH_ROOT . '/' . $line))
+							if (is_dir(JPATH_ROOT . '/' . $line))
 							{
 								$folders[] = JPATH_ROOT . '/' . $line;
 							}
-							elseif (Folder::exists($line))
+							elseif (is_dir($line))
 							{
 								$folders[] = $line;
 							}

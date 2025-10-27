@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,8 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -37,14 +36,14 @@ class JedcheckerViewUploads extends HtmlView
 	 *
 	 * @param   string  $tpl  - the template
 	 *
-	 * @return mixed|void
+	 * @return void
 	 */
 	public function display($tpl = null)
 	{
-		$this->path = Factory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker';
 
 		// Load translation for "JED Checker" title from sys.ini file
-		Factory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
+		Factory::getApplication()->getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
 
 		$this->setToolbar();
 		$this->jsOptions['url'] = Uri::base();
@@ -100,7 +99,7 @@ class JedcheckerViewUploads extends HtmlView
 			ToolbarHelper::custom('uploads.clear', 'delete', 'delete', Text::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
 		}
 
-		if (Factory::getUser()->authorise('core.admin', 'com_jedchecker'))
+		if (Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jedchecker'))
 		{
 			ToolbarHelper::preferences('com_jedchecker');
 		}
@@ -115,9 +114,9 @@ class JedcheckerViewUploads extends HtmlView
 	 */
 	private function filesExist($type)
 	{
-		$path = Factory::getConfig()->get('tmp_path') . '/jed_checker/' . $type;
+		$path = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/' . $type;
 
-		if (Folder::exists($path))
+		if (is_dir($path))
 		{
 			if (Folder::folders($path) || Folder::files($path))
 			{
@@ -126,9 +125,9 @@ class JedcheckerViewUploads extends HtmlView
 		}
 		else
 		{
-			$local = Factory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+			$local = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-			if ($type === 'unzipped' && File::exists($local))
+			if ($type === 'unzipped' && is_file($local))
 			{
 				return true;
 			}

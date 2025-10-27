@@ -2,10 +2,10 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
- * 			   eaxs <support@projectfork.net>
+ *             eaxs <support@projectfork.net>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -13,7 +13,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 
 /**
  * Class JEDcheckerReport
@@ -23,7 +22,7 @@ use Joomla\CMS\Object\CMSObject;
  *
  * @since  1.0
  */
-class JEDcheckerReport extends CMSObject
+class JEDcheckerReport
 {
 	/**
 	 * Rule's issue levels
@@ -91,9 +90,6 @@ class JEDcheckerReport extends CMSObject
 	 */
 	public function __construct($properties = null)
 	{
-		// Construct JObject
-		parent::__construct($properties);
-
 		// Initialise vars
 		if (empty($this->data))
 		{

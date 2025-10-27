@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *             eaxs <support@projectfork.net>
  *
@@ -162,7 +162,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		}
 
 		// Get the real extension's name now that the language has been loaded
-		$lang = Factory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
 		$extensionName = $lang->_((string) $xml->name);
 
 		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
@@ -298,7 +298,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		}
 
 		// Load the language of the extension (if any)
-		$lang = Factory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
 
 		// Populate list of directories to look for
 		$lookupLangDirs = array();

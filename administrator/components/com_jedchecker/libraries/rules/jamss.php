@@ -2,17 +2,17 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
- * 			   Bernard Toplak <bernard@orion-web.hr>
+ *             Bernard Toplak <bernard@orion-web.hr>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 
 // Include the rule base class
