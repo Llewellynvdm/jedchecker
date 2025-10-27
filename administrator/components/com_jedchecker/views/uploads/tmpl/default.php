@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -101,8 +101,8 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 								$rule = new $class;
 								?>
 								<a role="tab" id="jed-<?php echo $rulename; ?>" data-bs-toggle="tab" href="#jedtab-<?php echo $rulename; ?>"
-								   class="list-group-item list-group-item-action d-flex justify-content-between<?php echo $i === 0 ? ' active' : ''; ?>">
-									<?php echo Text::_($rule->get('title')); ?>
+								   class="bg-body list-group-item list-group-item-action d-flex justify-content-between<?php echo $i === 0 ? ' active' : ''; ?>">
+									<?php echo Text::_($rule->getTitle()); ?>
 									<span class="text-nowrap ps-1">
 										<span class="badge bg-danger rounded-pill border-error"></span>
 										<span class="badge bg-warning rounded-pill"></span>
@@ -136,12 +136,12 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 				?>
 				<div role="tabpanel" class="tab-pane fade<?php echo $i === 0 ? ' show active' : ''; ?>" id="jedtab-<?php echo $rulename; ?>">
 				<div class="card">
-					<div class="card-header" id="heading<?php echo $rule->get('id'); ?>">
-						<?php echo Text::_($rule->get('title')); ?>
+					<div class="card-header" id="heading<?php echo $rule->getId(); ?>">
+						<?php echo Text::_($rule->getTitle()); ?>
 					</div>
 					<div class="card-body">
 						<p class="card-text">
-							<?php echo Text::_($rule->get('description')); ?>
+							<?php echo Text::_($rule->getDescription()); ?>
 						</p>
 						<div class="card-text police-check-result" id="police-check-result-<?php echo $rulename; ?>">
 							<div class="text-center text-info"><span class="spinner-border"></span></div>

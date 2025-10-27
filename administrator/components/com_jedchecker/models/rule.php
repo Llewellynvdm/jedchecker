@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *             eaxs <support@projectfork.net>
  *
@@ -13,7 +13,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
-use Joomla\CMS\Object\CMSObject;
 
 /**
  * class JEDcheckerRule
@@ -22,7 +21,7 @@ use Joomla\CMS\Object\CMSObject;
  *
  * @since  1.0
  */
-class JEDcheckerRule extends CMSObject
+class JEDcheckerRule
 {
 	/**
 	 * The formal ID of this rule. For example: SE1.
@@ -69,7 +68,7 @@ class JEDcheckerRule extends CMSObject
 	/**
 	 * The report summary
 	 *
-	 * @var    array
+	 * @var    JEDcheckerReport
 	 */
 	protected $report;
 
@@ -80,8 +79,7 @@ class JEDcheckerRule extends CMSObject
 	 */
 	public function __construct($properties = null)
 	{
-		// Construct JObject
-		parent::__construct($properties);
+		$this->basedir = isset($properties['basedir']) ? $properties['basedir'] : '';
 
 		// Initialise vars
 		if (empty($this->report))
@@ -97,6 +95,38 @@ class JEDcheckerRule extends CMSObject
 		{
 			$this->params = $this->loadParams();
 		}
+	}
+
+	/**
+	* @return string
+	*/
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->title;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
+
+	/**
+	 * @return JEDcheckerReport
+	 */
+	public function getReport()
+	{
+		return $this->report;
 	}
 
 	/**

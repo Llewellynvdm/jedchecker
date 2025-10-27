@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 
 // Include the rule base class
@@ -89,7 +89,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		$folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, array(), array());
 		$files = Folder::files($this->basedir, $regexLeftoverFolders, true, true, array(), array());
 
-		if ($folders !== false)
+		if (is_array($folders))
 		{
 			// Warn on leftover folders found
 			foreach ($folders as $folder)
@@ -98,7 +98,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			}
 		}
 
-		if ($files !== false)
+		if (is_array($files))
 		{
 			// Warn on leftover files found
 			foreach ($files as $file)
@@ -229,8 +229,23 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 				if (preg_match($singleTest->regex, $lineContent))
 				{
-					$origLine = str_ireplace($singleTest->test, '<b>' . $singleTest->test . '</b>', htmlspecialchars($origLine));
-					$error_message = Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $origLine . '</pre>';
+					// Highlight the matched pattern, then escape for HTML display
+					$highlightedLine = str_ireplace($singleTest->test, '<b>' . $singleTest->test . '</b>', $origLine);
+					$highlightedLine = htmlspecialchars($highlightedLine, ENT_NOQUOTES);
+					// Restore the <b> tags
+					$highlightedLine = str_replace(['&lt;b&gt;', '&lt;/b&gt;'], ['<b>', '</b>'], $highlightedLine);
+
+					if (isset($testObject->version) && preg_match('/^(deprecated|removed)-in-j-/', $testObject->group))
+					{
+						// Use new consolidated language constants with version placeholder
+                        $langKey = (strpos($testObject->group, 'deprecated') === 0) ? 'COM_JEDCHECKER_ERROR_FRAMEWORK_DEPRECATED' : 'COM_JEDCHECKER_ERROR_FRAMEWORK_REMOVED';
+						$error_message = sprintf(Text::_($langKey), $testObject->version) . ':<pre>' . $highlightedLine . '</pre>';
+					}
+					else
+					{
+						// Fallback to old format for other error types
+						$error_message = Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $highlightedLine . '</pre>';
+					}
 
 					if ($singleTest->replacement !== false)
 					{
@@ -319,28 +334,94 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			}
 
 			$newTest = new stdClass;
-			$newTest->group = 'j5legacy';
+			$newTest->group = 'legacy_aliases';
 			$newTest->kind = 'compatibility';
 			$newTest->tests = array();
 
-			// Too many tests for j5legacy group, so that they are extracted to separate file
-			$j5legacy = parse_ini_file(__DIR__ . '/framework_j5legacy.ini');
+			// Load legacy class aliases (J-prefixed) grouped by Joomla version (4.0, 5.0, 6.0)
+			$legacyAliases = parse_ini_file(__DIR__ . '/framework_legacy_aliases.ini', true);
 
-			foreach ($j5legacy as $oldClass => $newClass)
+			foreach ($legacyAliases as $version => $aliases)
+			{
+				foreach ($aliases as $oldClass => $newClass)
+				{
+						$testObj = new stdClass;
+						$testObj->test = $oldClass;
+						$testObj->regex = $this->generateRegex($oldClass, true);
+						$testObj->replacement = $newClass;
+						$testObj->keepStrings = false;
+
+						$newTest->tests[] = $testObj;
+				}
+			}
+
+			$this->tests[] = $newTest;
+
+			// Load deprecation patterns from structured INI file
+			$this->loadDeprecatedPatterns();
+		}
+
+		return $this->tests;
+	}
+
+	/**
+	 * Load deprecation patterns from framework_deprecated.json
+	 *
+	 * @return void
+	 */
+	private function loadDeprecatedPatterns()
+	{
+		$deprecatedFile = __DIR__ . '/framework_deprecated.json';
+
+		if (!file_exists($deprecatedFile))
+		{
+			return;
+		}
+
+		$jsonContent = file_get_contents($deprecatedFile);
+
+		if ($jsonContent === false)
+		{
+			return;
+		}
+
+		$sections = json_decode($jsonContent, true);
+
+		if (!is_array($sections))
+		{
+			return;
+		}
+
+		foreach ($sections as $sectionName => $patterns)
+		{
+			$newTest = new stdClass;
+			$newTest->group = $sectionName;
+			$newTest->kind = 'compatibility';
+			$newTest->tests = array();
+
+			// Parse section name to extract version (e.g., "deprecated-in-j-4.3" => "4.3")
+			if (preg_match('/(?:deprecated|removed)-in-j-(.+)/', $sectionName, $matches))
+			{
+				$newTest->version = $matches[1];
+			}
+			else
+			{
+				$newTest->version = null;
+			}
+
+			foreach ($patterns as $pattern => $replacement)
 			{
 				$testObj = new stdClass;
-				$testObj->test = $oldClass;
-				$testObj->regex = $this->generateRegex($oldClass, true);
-				$testObj->replacement = $newClass;
-				$testObj->keepStrings = false;
+				$testObj->test = $pattern;
+				$testObj->regex = $this->generateRegex($pattern);
+				$testObj->replacement = ($replacement !== '') ? $replacement : false;
+				$testObj->keepStrings = strpos($pattern, "'") !== false;
 
 				$newTest->tests[] = $testObj;
 			}
 
 			$this->tests[] = $newTest;
 		}
-
-		return $this->tests;
 	}
 
 	/**

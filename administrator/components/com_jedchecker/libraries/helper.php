@@ -2,14 +2,14 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2021-2022 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2021-2025 Open Source Matters, Inc. All rights reserved.
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Filter\InputFilter;
 
 /**
